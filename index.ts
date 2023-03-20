@@ -1,19 +1,28 @@
 
+const dbConnectionF = require('./database/config');
+
 const express = require("express");
+require('dotenv').config()
 
 // Crear el servidor express
 const app= express();
 
-// Rutas
-app.get('/', (req, res) => {
+// Bases de datos
+dbConnectionF()
 
-    console.log('get')
-    res.json({
-        ok: true
-    })
+// cors
+// app.use(cors())
 
-});
+// Directorio publico
+app.use( express.static('public') );
 
-app.listen( 4000, () => {
-    console.log(`Servidor corriendo en el puerto ${ 4000 }`)
-})
+// Lectura de los datos enviados en json
+app.use( express.json() );
+
+// rutasz
+app.use( '/api/auth', require('./routes/auth.ts') )
+
+// Escuchar las peticiones
+app.listen( process.env.PORT, () => {
+    console.log(`sv corriendo ${ process.env.PORT }`)
+} )

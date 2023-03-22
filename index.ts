@@ -1,8 +1,9 @@
 
 const dbConnectionF = require('./database/config');
 
-const express = require("express");
+import express from 'express'
 require('dotenv').config()
+// const cors = require('cors')
 
 // Crear el servidor express
 const app= express();
@@ -21,8 +22,10 @@ app.use( express.json() );
 
 // rutasz
 app.use( '/api/auth', require('./routes/auth.ts') )
+app.use( '/api/products', require('./routes/products.ts') )
 
 // Escuchar las peticiones
 app.listen( process.env.PORT, () => {
     console.log(`sv corriendo ${ process.env.PORT }`)
 } )
+

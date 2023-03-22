@@ -1,18 +1,14 @@
-const { response } = require('express')
+import { response, Request } from 'express';
 
 import bcrypt from 'bcryptjs';
 
 import { User } from '../models/User'
 import { generateJwt } from "../helpers/jwt";
-
-interface UserRequestBody {
-    email?: string;
-    password?: string;
-}
+import { CustomRequestJwt } from '../interfaces/CustomRequestJwt';
 
 export const createUser = async( req: Request, res = response ) => {
 
-    const { email, password } = req.body as UserRequestBody;
+    const { email, password } = req.body;
 
     try {
 
@@ -54,7 +50,7 @@ export const createUser = async( req: Request, res = response ) => {
 
 export const loginUser = async( req: Request, res = response ) => {
 
-    const { email, password } = req.body as UserRequestBody;
+    const { email, password } = req.body;
 
     try {
 
@@ -95,9 +91,9 @@ export const loginUser = async( req: Request, res = response ) => {
 
 }
 
-export const deleteUser = async( req: any, res = response ) => {
+export const deleteUser = async( req: Request, res = response ) => {
 
-    const { email, password } = req.body as UserRequestBody;
+    const { password } = req.body;
     const userId: string = req.params.id;
 
     try {
@@ -137,13 +133,9 @@ export const deleteUser = async( req: any, res = response ) => {
     }
 }
 
-interface UpdateUserRequestBody extends UserRequestBody {
-    newPassword?: string,
-}
-
 export const updatePassword = async( req: Request, res = response ) => {
 
-    const { email, password, newPassword } = req.body as UpdateUserRequestBody; 
+    const { email, password, newPassword } = req.body; 
 
     try {
 
@@ -186,4 +178,20 @@ export const updatePassword = async( req: Request, res = response ) => {
         })
     }
 
+}
+
+export const revalidateToken = async( req: CustomRequestJwt, res = response ) => {
+
+    const { uid, name } = req
+
+    // Generar un nuevo token
+    const token = await generateJwt( uid, name )
+
+    res.json({
+        ok: true,
+        msg: 'renew',
+        uid,
+        name,
+        token
+    })
 }

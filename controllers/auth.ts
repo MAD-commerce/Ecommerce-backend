@@ -179,7 +179,7 @@ export const updatePassword = async( req: Request, res = response ) => {
     }
 
 }
-
+ 
 export const revalidateToken = async( req: CustomRequestJwt, res = response ) => {
 
     const { uid, name } = req

@@ -1,52 +1,58 @@
-
-const { Router } = require('express');
+const { Router } = require("express");
 const router = Router();
 
-import { check } from 'express-validator';
-import { createUser, loginUser, deleteUser, updatePassword, revalidateToken } from '../controllers/auth';
-import { validateJWT } from '../middlewares/validate-jwt';
-import { validateEntries } from '../middlewares/validate_entries';
+import { check } from "express-validator";
+import {
+  createUser,
+  loginUser,
+  deleteUser,
+  updatePassword,
+  revalidateToken,
+} from "../controllers/auth";
+import { validateJWT, validateJWTGoogle } from "../middlewares/validate-jwt";
+import { validateEntries } from "../middlewares/validate_entries";
 
 router.post(
-    '/new',
-    [
-        check('name', 'El nombre es obligatorio').not().isEmpty(),
-        check('email', 'El email es obligatorio').isEmail(),
-        check('password', 'El password debe de ser de 6 caracteres').isLength({ min: 6 }), 
-        validateEntries
-    ],
-    createUser
-)
-
-router.get(
-    '/login',
-    [
-        check('email', 'El email es obligatorio').isEmail(),
-        check('password', 'El password debe de ser de 6 caracteres').isLength({ min: 6 }), 
-        validateEntries
-    ],
-    loginUser
-)
-
-router.delete( 
-    '/:id',
-    deleteUser
-)
+  "/new",
+  [
+    check("name", "El nombre es obligatorio").not().isEmpty(),
+    check("email", "El email es obligatorio").isEmail(),
+    check("password", "El password debe de ser de 6 caracteres").isLength({
+      min: 6,
+    }),
+    validateEntries,
+  ],
+  createUser
+);
 
 router.post(
-    '/update',
-    [
-        check('email', 'El email es obligatorio').isEmail(),
-        check('password', 'El password debe de ser de 6 caracteres').isLength({ min: 6 }), 
-        validateEntries
-    ],
-    updatePassword
-)
+  "/login",
+  [
+    check("email", "El email es obligatorio").isEmail(),
+    check("password", "El password debe de ser de 6 caracteres").isLength({
+      min: 6,
+    }),
+    validateEntries,
+  ],
+  loginUser
+);
 
-router.get(
-    '/renewJtw',
-    validateJWT,
-    revalidateToken
-)
+router.delete("/:id", deleteUser);
+
+router.post(
+  "/update",
+  [
+    check("email", "El email es obligatorio").isEmail(),
+    check("password", "El password debe de ser de 6 caracteres").isLength({
+      min: 6,
+    }),
+    validateEntries,
+  ],
+  updatePassword
+);
+
+router.get("/renewJwt", validateJWT, revalidateToken);
+
+router.get("/renewJwtGoogle", validateJWTGoogle);
 
 module.exports = router;

@@ -15,4 +15,11 @@ export interface ProductInterface {
 export interface CustomRequestJwt extends Request {
   uid: string;
   name: string;
+  role: string;
+}
+
+export interface TokenPayload {
+  uid: string;
+  name: string;
+  role: string;
 }

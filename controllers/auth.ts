@@ -19,6 +19,9 @@ export const createUser = async (req: Request, res = response) => {
       });
     }
 
+    req.body.role = "user";
+    req.body.cart = [];
+
     user = new User(req.body);
 
     // Encriptar contraseña
@@ -27,13 +30,14 @@ export const createUser = async (req: Request, res = response) => {
 
     await user.save();
 
-    const token = await generateJwt(user.id, user.name);
+    const token = await generateJwt(user.id, user.name, user.role);
 
     res.status(201).json({
       ok: true,
       uid: user.id,
       name: user.name,
       cart: user.cart,
+      role: user.role,
       token,
     });
   } catch (error) {
@@ -67,12 +71,13 @@ export const loginUser = async (req: Request, res = response) => {
       });
     }
 
-    const token = await generateJwt(user.id, user.name);
+    const token = await generateJwt(user.id, user.name, user.role);
 
     res.status(201).json({
       ok: true,
       uid: user.id,
       name: user.name,
+      role: user.role,
       token,
     });
   } catch (error) {
@@ -149,7 +154,7 @@ export const updatePassword = async (req: Request, res = response) => {
 
     await user.save();
 
-    const token = await generateJwt(user.id, user.name);
+    const token = await generateJwt(user.id, user.name, user.role);
 
     res.status(201).json({
       ok: true,
@@ -170,16 +175,17 @@ export const revalidateToken = async (
   req: CustomRequestJwt,
   res = response
 ) => {
-  const { uid, name } = req;
+  const { uid, name, role } = req;
 
   // Generar un nuevo token
-  const token = await generateJwt(uid, name);
+  const token = await generateJwt(uid, name, role);
 
   res.json({
     ok: true,
     msg: "renew",
     uid,
     name,
+    role,
     token,
   });
 };

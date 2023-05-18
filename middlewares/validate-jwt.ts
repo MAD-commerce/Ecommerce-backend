@@ -3,8 +3,11 @@ const client = new OAuth2Client(
   "650875211792-ul73nog7sgkup12s4f82io9vddvco3jt.apps.googleusercontent.com"
 );
 import { response, NextFunction } from "express";
-import { CustomRequestJwt } from "../interfaces/CustomRequestJwt";
+import { CustomRequestJwt, TokenPayload } from "../interfaces/CustomRequestJwt";
 import { generateJwt } from "../helpers/jwt";
+import { User } from "../models/User";
+import { createUser } from "../controllers/auth";
+import bcrypt from "bcryptjs";
 
 const jwt = require("jsonwebtoken");
 
@@ -24,10 +27,14 @@ export const validateJWT = (
   }
 
   try {
-    const payload = jwt.verify(token, process.env.SECRET_JWT_SEED);
+    const payload: TokenPayload = jwt.verify(
+      token,
+      process.env.SECRET_JWT_SEED
+    );
 
     req.uid = payload.uid;
     req.name = payload.name;
+    req.role = payload.role;
   } catch (error) {
     return res.status(401).json({
       ok: false,
@@ -57,15 +64,32 @@ export const validateJWTGoogle = async (req: any, res = response) => {
     });
 
     const payload = ticket.getPayload();
-    const uid: string = payload!["sub"];
     const name: string | undefined = payload!["name"];
+    const email: string | undefined = payload!["email"];
 
-    const renewToken = await generateJwt(uid, name!);
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Encriptar contraseña
+      const salt: string = bcrypt.genSaltSync();
+      let password = bcrypt.hashSync("123456", salt);
+
+      user = new User({
+        name,
+        email,
+        password,
+        role: "user",
+        cart: [],
+      });
+
+      await user.save();
+    }
+    const renewToken = await generateJwt(user.id, name!, "user");
 
     res.json({
       ok: true,
       msg: "renew",
-      uid,
+      uid: user.id,
       name,
       renewToken,
     });

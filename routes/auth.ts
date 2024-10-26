@@ -8,6 +8,7 @@ import {
   deleteUser,
   updatePassword,
   revalidateToken,
+  updateUser,
 } from "../controllers/auth";
 import { validateJWT, validateJWTGoogle } from "../middlewares/validate-jwt";
 import { validateEntries } from "../middlewares/validate_entries";
@@ -49,6 +50,15 @@ router.post(
     validateEntries,
   ],
   updatePassword
+);
+
+router.put(
+  "/updateUser",
+  [
+    check("email", "El email es obligatorio").isEmail(),
+    validateEntries,
+  ],
+  updateUser
 );
 
 router.get("/renewJwt", validateJWT, revalidateToken);

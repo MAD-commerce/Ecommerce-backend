@@ -89,6 +89,33 @@ export const loginUser = async (req: Request, res = response) => {
   }
 };
 
+export const updateUser = async (req: Request, res = response) => {
+  const { name, email, address } = req.body;
+
+  try {
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({
+        ok: false,
+        msg: "El usuario no fue encontrado",
+      });
+    }
+
+    user.name = name;
+    user.address = address;
+
+    user.save();
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Error",
+    });
+  }
+}
+
 export const deleteUser = async (req: Request, res = response) => {
   const { password } = req.body;
   const userId: string = req.params.id;

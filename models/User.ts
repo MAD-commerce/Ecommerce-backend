@@ -5,6 +5,7 @@ interface IUser extends Document {
   name: string;
   email: string;
   password: string;
+  address: string;
   role: string;
   cart: ProductInterface[];
 }
@@ -12,6 +13,7 @@ interface IUser extends Document {
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
+  address: { type: String, required: false },
   password: { type: String, required: true },
   role: { type: String, required: true },
   cart: { type: [], required: true },

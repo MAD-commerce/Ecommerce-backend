@@ -9,6 +9,7 @@ import {
   getAllProducts,
   getCartById,
   getProductById,
+  sendEmail,
 } from "../controllers/products";
 import { validateJWT } from "../middlewares/validate-jwt";
 
@@ -26,5 +27,7 @@ router.post("/updateCart", validateJWT, addProductCart);
 router.post("/deleteProductCart", validateJWT, deleteProductCart);
 
 router.get("/getCartById", validateJWT, getCartById);
+
+router.post("/sendEmail", sendEmail)
 
 module.exports = router;

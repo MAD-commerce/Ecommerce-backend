@@ -6,6 +6,7 @@ import fs from "fs";
 import path from "path";
 import { User } from "../models/User";
 import { ProductInterface } from "../interfaces/CustomRequestJwt";
+const nodemailer = require('nodemailer');
 
 export const createProduct = async (req: Request, res = response) => {
   try {
@@ -173,4 +174,85 @@ export const deleteProductCart = async (req: Solicitud, res = response) => {
       msg: "Error",
     });
   }
+};
+
+export const sendEmail = async (req: Request, res = response) => {
+
+  const { email } = req.body;
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail', // También puedes usar otros servicios SMTP
+    auth: {
+      user: 'unilocalproyecto@gmail.com',       // Tu correo electrónico
+      pass: 'qofa ivix aooh yxiv',            // Tu contraseña (puede que necesites una contraseña de aplicación para Gmail)
+    }
+  });
+
+  const mailOptions = {
+    to: email,      // Destinatario
+    subject: 'Asunto del correo',
+    text: 'Este es el contenido del correo en texto plano.',
+    html: `${generateProductListHTML(req.body)}`, // El contenido del correo en HTML
+  };
+
+  try {
+
+    transporter.sendMail(mailOptions, (error: any, info: any) => {
+      if (error) {
+        console.log('Error al enviar correo:', error);
+        res.status(500).json({
+          ok: false,
+          msg: "Error al enviar el email",
+        });
+      } else {
+        res.status(201).json({
+          ok: true,
+        });
+        console.log('Correo enviado:', info.response);
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      msg: "Error al enviar el email",
+    });
+  }
+}
+
+const generateProductListHTML = (req: any) => {
+
+  const { email, products, totalPrice } = req;
+
+  // Genera las filas de la tabla para cada producto
+  interface ProductEmail {
+    id: string;
+    name: string;
+    cantidad: number;
+  }
+
+  const productRows = (products as ProductEmail[]).map((product: ProductEmail) => `
+    <tr>
+      <td style="padding: 8px; border: 1px solid #ddd;">${product.id}</td>
+      <td style="padding: 8px; border: 1px solid #ddd;">${product.name}</td>
+      <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${product.cantidad}</td>
+    </tr>
+  `).join('');
+
+  return `
+    <h2>Resumen de Compra</h2>
+    <p>Gracias por tu compra, <b>${email}</b>. A continuación, los detalles:</p>
+    <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif;">
+      <thead>
+        <tr style="background-color: #f2f2f2;">
+          <th style="padding: 8px; border: 1px solid #ddd;">ID</th>
+          <th style="padding: 8px; border: 1px solid #ddd;">Nombre</th>
+          <th style="padding: 8px; border: 1px solid #ddd;">Cantidad</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${productRows}
+        <p>Total: $${totalPrice}</p>
+      </tbody>
+    </table>
+  `;
 };

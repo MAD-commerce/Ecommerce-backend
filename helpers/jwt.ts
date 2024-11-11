@@ -1,11 +1,13 @@
 import jwt from "jsonwebtoken";
 
-export const generateJwt = (uid: string, name: string, role: string) => {
+export const generateJwt = (uid: string, name: string, role: string, email?: string, address?: string) => {
   return new Promise((resolve, reject) => {
     const payload = {
       uid,
       name,
       role,
+      email,
+      address,
     };
 
     // contenido, firma, duracion

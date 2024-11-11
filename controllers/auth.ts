@@ -1,4 +1,4 @@
-import { response, Request } from "express";
+import e, { response, Request } from "express";
 
 import bcrypt from "bcryptjs";
 
@@ -104,8 +104,11 @@ export const updateUser = async (req: Request, res = response) => {
       });
     }
 
+    console.log(user);
+
     user.name = name;
     user.address = address;
+    user.email = email;
 
     user.save();
 
@@ -204,10 +207,10 @@ export const revalidateToken = async (
   req: CustomRequestJwt,
   res = response
 ) => {
-  const { uid, name, role } = req;
+  const { uid, name, role, email, address } = req;
 
   // Generar un nuevo token
-  const token = await generateJwt(uid, name, role);
+  const token = await generateJwt(uid, name, role, email, address);
 
   res.json({
     ok: true,
@@ -215,6 +218,8 @@ export const revalidateToken = async (
     uid,
     name,
     role,
+    email,
+    address,
     token,
   });
 };

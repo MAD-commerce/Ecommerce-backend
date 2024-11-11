@@ -16,6 +16,8 @@ export interface CustomRequestJwt extends Request {
   uid: string;
   name: string;
   role: string;
+  email: string;
+  address: string;
 }
 
 export interface TokenPayload {

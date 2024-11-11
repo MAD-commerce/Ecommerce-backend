@@ -193,6 +193,13 @@ export const sendEmail = async (req: Request, res = response) => {
     subject: 'Asunto del correo',
     text: 'Este es el contenido del correo en texto plano.',
     html: `${generateProductListHTML(req.body)}`, // El contenido del correo en HTML
+    attachments: [
+      {
+        filename: 'imagen.png',
+        content: `${req.body.evidence}`.replace(/^data:image\/png;base64,/, ""),
+        encoding: 'base64'
+      }
+    ]
   };
 
   try {
@@ -221,7 +228,7 @@ export const sendEmail = async (req: Request, res = response) => {
 
 const generateProductListHTML = (req: any) => {
 
-  const { email, products, totalPrice } = req;
+  const { email, adress, evidence, products, totalPrice } = req;
 
   // Genera las filas de la tabla para cada producto
   interface ProductEmail {
@@ -247,9 +254,9 @@ const generateProductListHTML = (req: any) => {
           <th style="padding: 8px; border: 1px solid #ddd;">ID</th>
           <th style="padding: 8px; border: 1px solid #ddd;">Nombre</th>
           <th style="padding: 8px; border: 1px solid #ddd;">Cantidad</th>
-        </tr>
-      </thead>
-      <tbody>
+          </tr>
+          </thead>
+          <tbody>
         ${productRows}
         <p>Total: $${totalPrice}</p>
       </tbody>

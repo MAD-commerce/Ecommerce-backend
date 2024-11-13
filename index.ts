@@ -1,4 +1,4 @@
-const dbConnectionF = require("./database/config");
+const dbConnectionF = require("./src/database/config");
 
 import express from "express";
 require("dotenv").config();
@@ -20,8 +20,8 @@ app.use(express.static("public"));
 app.use(express.json());
 
 // rutasz
-app.use("/api/auth", require("./routes/auth.ts"));
-app.use("/api/products", require("./routes/products.ts"));
+app.use("/api/auth", require("./src/routes/auth.js"));
+app.use("/api/products", require("./src/routes/products.js"));
 
 // Escuchar las peticiones
 app.listen(process.env.PORT, () => {

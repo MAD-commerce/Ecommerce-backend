@@ -35,6 +35,8 @@ export const validateJWT = (
     req.uid = payload.uid;
     req.name = payload.name;
     req.role = payload.role;
+    req.address = payload.address;
+
   } catch (error) {
     return res.status(401).json({
       ok: false,
@@ -80,17 +82,19 @@ export const validateJWTGoogle = async (req: any, res = response) => {
         password,
         role: "user",
         cart: [],
+        address: "",
       });
 
       await user.save();
     }
-    const renewToken = await generateJwt(user.id, name!, "user");
+    const renewToken = await generateJwt(user.id, name!, "user", user.address);
 
     res.json({
       ok: true,
       msg: "renew",
       uid: user.id,
       name,
+      address: user.address,
       renewToken,
     });
   } catch (error) {

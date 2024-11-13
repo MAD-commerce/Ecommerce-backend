@@ -30,7 +30,7 @@ export const createUser = async (req: Request, res = response) => {
 
     await user.save();
 
-    const token = await generateJwt(user.id, user.name, user.role);
+    const token = await generateJwt(user.id, user.name, user.role, user.email, user.address);
 
     res.status(201).json({
       ok: true,
@@ -71,7 +71,7 @@ export const loginUser = async (req: Request, res = response) => {
       });
     }
 
-    const token = await generateJwt(user.id, user.name, user.role);
+    const token = await generateJwt(user.id, user.name, user.role, user.email, user.address);
 
     res.status(201).json({
       ok: true,
@@ -103,8 +103,6 @@ export const updateUser = async (req: Request, res = response) => {
         msg: "El usuario no fue encontrado",
       });
     }
-
-    console.log(user);
 
     user.name = name;
     user.address = address;
@@ -186,7 +184,7 @@ export const updatePassword = async (req: Request, res = response) => {
 
     await user.save();
 
-    const token = await generateJwt(user.id, user.name, user.role);
+    const token = await generateJwt(user.id, user.name, user.role, user.email, user.address);
 
     res.status(201).json({
       ok: true,

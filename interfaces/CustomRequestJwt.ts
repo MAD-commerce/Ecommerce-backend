@@ -24,4 +24,5 @@ export interface TokenPayload {
   uid: string;
   name: string;
   role: string;
+  address: string;
 }
